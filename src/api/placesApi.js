@@ -1,8 +1,14 @@
 // Google Places API service
-import { GOOGLE_PLACES_API_KEY } from '@env';
 
-// Your Google Places API key from environment variables
-const API_KEY = GOOGLE_PLACES_API_KEY || '';
+// Your Google Places API key
+// NOTE: For development purposes only. In production, use environment variables.
+// This is a temporary solution until we resolve the environment variable setup.
+// IMPORTANT: Replace with your own API key for development, but use a placeholder before pushing to GitHub
+const API_KEY = 'YOUR_GOOGLE_PLACES_API_KEY'; // Replace with your actual API key for local development
+
+// TODO: Replace with environment variable implementation when fixed
+// import { GOOGLE_PLACES_API_KEY } from '@env';
+// const API_KEY = GOOGLE_PLACES_API_KEY || '';
 
 // Base URL for Google Places API
 // For web environments, we need to use a CORS proxy
@@ -24,8 +30,10 @@ if (isWeb) {
 
 // Check if API key is available
 if (!API_KEY) {
-  console.error('Google Places API key is missing! Make sure you have set up your .env file correctly.');
-  console.error('Copy .env.example to .env and add your API key.');
+  console.error('Google Places API key is missing!');
+  // When we switch back to environment variables, uncomment the following:
+  // console.error('Make sure you have set up your .env file correctly.');
+  // console.error('Copy .env.example to .env and add your API key.');
 }
 
 // Function to search for places by query and type

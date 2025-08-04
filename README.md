@@ -47,16 +47,33 @@ Before running the app, you need to add your Google Places API key:
 1. Go to the Google Cloud Console and create a project
 2. Enable the Google Places API
 3. Create an API key
-4. Copy the `.env.example` file to `.env`:
-   ```
+
+#### Current Implementation (Temporary)
+
+Currently, the API key is hardcoded in the `src/api/placesApi.js` file for development purposes. This is a temporary solution until we resolve the environment variable setup with Expo.
+
+#### Future Implementation (Environment Variables)
+
+In the future, we will use environment variables for API key management:
+
+1. Copy the `.env.example` file to `.env`:
+```
    cp .env.example .env
    ```
-5. Open the `.env` file and replace `your_google_places_api_key_here` with your actual API key:
+2. Open the `.env` file and replace `your_google_places_api_key_here` with your actual API key:
    ```
    GOOGLE_PLACES_API_KEY=your_actual_api_key_here
    ```
 
+3. Uncomment the environment variable import in `src/api/placesApi.js`:
+   ```javascript
+   import { GOOGLE_PLACES_API_KEY } from '@env';
+   const API_KEY = GOOGLE_PLACES_API_KEY || '';
+   ```
+
 > **Important**: Never commit your `.env` file to version control. It's already added to `.gitignore` to prevent accidental commits.
+
+> **Note**: We're currently experiencing issues with the environment variable setup in Expo. We'll update this documentation once the issue is resolved.
 
 ### Running the App
 
@@ -87,6 +104,18 @@ src/
     ├── HomeScreen.js     # Categories list screen
     └── BusinessListScreen.js # Business listings screen
 ```
+
+## GitHub and API Key Security
+
+When pushing to GitHub, ensure that:
+
+1. The `.env` file is not included in your commits (it should be ignored by `.gitignore`)
+2. The temporary API key in `src/api/placesApi.js` is replaced with a placeholder before pushing
+
+For production deployments, consider using:
+- Environment variables in your hosting platform
+- API key restrictions in the Google Cloud Console (HTTP referrers, IP addresses, etc.)
+- A backend proxy service to hide your API key from client-side code
 
 ## Customization
 
