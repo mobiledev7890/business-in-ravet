@@ -1,93 +1,87 @@
-# Business in Ravet - Directory App
+# Business in Ravet
 
-A React Native application built with Expo that serves as a business directory for the Ravet area in Pune. The app allows users to browse businesses by categories such as grocery shops, salons, hardware shops, and restaurants.
+A React Native mobile application for discovering local businesses in Ravet, Pune. Built with Expo and Google Places API.
 
-## Features
+## 🚀 Features
 
-- Browse businesses by categories
-- View detailed information about each business
-- See business photos, ratings, and reviews
-- Get directions to businesses
-- Call businesses directly from the app
-- Visit business websites
+- **Business Categories**: Browse businesses by category (Grocery, Salons, Hardware, Restaurants)
+- **Business Details**: View detailed information including photos, reviews, and contact details
+- **Interactive Maps**: Get directions to businesses using Google Maps
+- **Contact Integration**: Call businesses directly from the app
+- **Cross-Platform**: Works on iOS, Android, and Web
 
-## Setup Instructions
+## 🛠️ Tech Stack
+
+- **React Native** with Expo
+- **Google Places API** for business data
+- **React Navigation** for app navigation
+- **FontAwesome** for icons
+- **Custom Hooks** for state management
+
+## 📱 Screenshots
+
+*Add screenshots here when available*
+
+## 🏗️ Architecture
+
+The app follows **SOLID principles** and modern React patterns:
+
+### Custom Hooks
+- `useBusinesses` - Manages business data fetching
+- `useSelectedBusiness` - Manages selected business state
+- `useCategories` - Manages categories data
+- `useBusinessDetails` - Manages business details fetching
+
+### Components
+- `BusinessCard` - Displays business information in list
+- `BusinessDetails` - Shows detailed business information
+- `CategoryCard` - Displays business categories
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js
+- Node.js (v14 or higher)
 - npm or yarn
 - Expo CLI
-- Google Places API Key
-
-## Environment Variables
-
-This project uses environment variables to securely store API keys and other sensitive information. The following environment variables are used:
-
-| Variable | Description |
-|----------|-------------|
-| `GOOGLE_PLACES_API_KEY` | Your Google Places API key for accessing the Places API |
+- Google Places API key
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/business-in-ravet.git
+   cd business-in-ravet
    ```
+
+2. **Install dependencies**
+   ```bash
    npm install
    ```
-   or
-   ```
-   yarn install
-   ```
 
-### Adding Google Places API Key
-
-Before running the app, you need to add your Google Places API key:
-
-1. Go to the Google Cloud Console and create a project
-2. Enable the Google Places API
-3. Create an API key
-
-#### Current Implementation (Temporary)
-
-Currently, the API key is hardcoded in the `src/api/placesApi.js` file for development purposes. This is a temporary solution until we resolve the environment variable setup with Expo.
-
-#### Future Implementation (Environment Variables)
-
-In the future, we will use environment variables for API key management:
-
-1. Copy the `.env.example` file to `.env`:
-```
+3. **Set up environment variables**
+   ```bash
    cp .env.example .env
    ```
-2. Open the `.env` file and replace `your_google_places_api_key_here` with your actual API key:
+   Edit `.env` and add your Google Places API key:
    ```
-   GOOGLE_PLACES_API_KEY=your_actual_api_key_here
-   ```
-
-3. Uncomment the environment variable import in `src/api/placesApi.js`:
-   ```javascript
-   import { GOOGLE_PLACES_API_KEY } from '@env';
-   const API_KEY = GOOGLE_PLACES_API_KEY || '';
+   GOOGLE_PLACES_API_KEY=your_api_key_here
    ```
 
-> **Important**: Never commit your `.env` file to version control. It's already added to `.gitignore` to prevent accidental commits.
+4. **Start the development server**
+   ```bash
+   npm start
+   ```
 
-> **Note**: We're currently experiencing issues with the environment variable setup in Expo. We'll update this documentation once the issue is resolved.
+### Getting a Google Places API Key
 
-### Running the App
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **Places API** service
+4. Create an API key in the Credentials section
+5. Add the API key to your `.env` file
 
-```
-npx expo start
-```
-
-This will start the Expo development server. You can then run the app on:
-- iOS simulator (press i)
-- Android emulator (press a)
-- Web browser (press w)
-- Physical device by scanning the QR code with the Expo Go app
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 src/
@@ -98,6 +92,11 @@ src/
 │   ├── BusinessCard.js   # Business list item component
 │   ├── BusinessDetails.js # Business details component
 │   └── CategoryCard.js   # Category card component
+├── hooks/
+│   ├── useBusinesses.js      # Business data management
+│   ├── useSelectedBusiness.js # Selected business state
+│   ├── useCategories.js      # Categories data
+│   └── useBusinessDetails.js # Business details fetching
 ├── navigation/
 │   └── AppNavigator.js   # Navigation configuration
 └── screens/
@@ -105,24 +104,70 @@ src/
     └── BusinessListScreen.js # Business listings screen
 ```
 
-## GitHub and API Key Security
+## 🔧 Development
 
-When pushing to GitHub, ensure that:
+### Running the App
 
-1. The `.env` file is not included in your commits (it should be ignored by `.gitignore`)
-2. The temporary API key in `src/api/placesApi.js` is replaced with a placeholder before pushing
+- **Web**: Press `w` in the terminal or visit `http://localhost:19006`
+- **iOS Simulator**: Press `i` in the terminal
+- **Android Emulator**: Press `a` in the terminal
+- **Physical Device**: Scan the QR code with Expo Go app
 
-For production deployments, consider using:
-- Environment variables in your hosting platform
-- API key restrictions in the Google Cloud Console (HTTP referrers, IP addresses, etc.)
-- A backend proxy service to hide your API key from client-side code
+### Available Scripts
 
-## Customization
+- `npm start` - Start the Expo development server
+- `npm run android` - Run on Android
+- `npm run ios` - Run on iOS
+- `npm run web` - Run on web
 
-### Adding New Categories
+## 🎯 Features in Detail
 
-To add new business categories, edit the `src/api/categories.js` file and add new category objects to the array.
+### Business Search
+- Search businesses by category in Ravet, Pune
+- Real-time data from Google Places API
+- Location-based search with customizable radius
 
-### Modifying the Search Location
+### Business Details
+- Complete business information
+- Photos and reviews
+- Opening hours
+- Contact information
+- Direct integration with phone and maps
 
-By default, the app searches for businesses in the Ravet area of Pune. To change the search location, modify the `location` parameter in the `searchPlaces` function in `src/api/placesApi.js`.
+### User Experience
+- Clean, modern UI design
+- Smooth navigation
+- Loading states and error handling
+- Retry functionality for failed requests
+
+## 🔒 Security
+
+- API keys are stored in environment variables
+- `.env` file is excluded from version control
+- No sensitive data is committed to the repository
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Google Places API for business data
+- Expo team for the amazing development platform
+- React Native community for excellent documentation
+
+## 📞 Support
+
+If you have any questions or need help, please open an issue on GitHub.
+
+---
+
+**Built with ❤️ for the Ravet community**
