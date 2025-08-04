@@ -20,6 +20,14 @@ A React Native application built with Expo that serves as a business directory f
 - Expo CLI
 - Google Places API Key
 
+## Environment Variables
+
+This project uses environment variables to securely store API keys and other sensitive information. The following environment variables are used:
+
+| Variable | Description |
+|----------|-------------|
+| `GOOGLE_PLACES_API_KEY` | Your Google Places API key for accessing the Places API |
+
 ### Installation
 
 1. Clone the repository
@@ -39,11 +47,16 @@ Before running the app, you need to add your Google Places API key:
 1. Go to the Google Cloud Console and create a project
 2. Enable the Google Places API
 3. Create an API key
-4. Open `src/api/placesApi.js` and replace `YOUR_GOOGLE_PLACES_API_KEY` with your actual API key:
+4. Copy the `.env.example` file to `.env`:
+   ```
+   cp .env.example .env
+   ```
+5. Open the `.env` file and replace `your_google_places_api_key_here` with your actual API key:
+   ```
+   GOOGLE_PLACES_API_KEY=your_actual_api_key_here
+   ```
 
-```javascript
-const API_KEY = 'YOUR_GOOGLE_PLACES_API_KEY';
-```
+> **Important**: Never commit your `.env` file to version control. It's already added to `.gitignore` to prevent accidental commits.
 
 ### Running the App
 

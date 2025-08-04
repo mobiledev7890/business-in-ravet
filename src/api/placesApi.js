@@ -1,7 +1,8 @@
 // Google Places API service
+import { GOOGLE_PLACES_API_KEY } from '@env';
 
-// Your Google Places API key
-const API_KEY = 'AIzaSyD-Y6YDS4SzSixjX708yfTy1VNoIDHYDEw';
+// Your Google Places API key from environment variables
+const API_KEY = GOOGLE_PLACES_API_KEY || '';
 
 // Base URL for Google Places API
 // For web environments, we need to use a CORS proxy
@@ -19,6 +20,12 @@ let corsProxyAccessGranted = false;
 if (isWeb) {
   console.log('Running in web environment. CORS proxy may be required.');
   console.log('If you encounter CORS errors, please visit https://cors-anywhere.herokuapp.com/corsdemo to request temporary access.');
+}
+
+// Check if API key is available
+if (!API_KEY) {
+  console.error('Google Places API key is missing! Make sure you have set up your .env file correctly.');
+  console.error('Copy .env.example to .env and add your API key.');
 }
 
 // Function to search for places by query and type
