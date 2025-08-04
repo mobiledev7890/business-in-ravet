@@ -1,12 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, SafeAreaView, StatusBar } from 'react-native';
 import CategoryCard from '../components/CategoryCard';
-import { categories } from '../api/categories';
+import { useCategories } from '../hooks/useCategories';
 
 const HomeScreen = ({ navigation }) => {
+  const { categories } = useCategories();
+
   const handleCategoryPress = (category) => {
     navigation.navigate('BusinessList', { category });
   };
+
+  const renderCategoryItem = ({ item }) => (
+    <CategoryCard category={item} onPress={handleCategoryPress} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,9 +24,7 @@ const HomeScreen = ({ navigation }) => {
       
       <FlatList
         data={categories}
-        renderItem={({ item }) => (
-          <CategoryCard category={item} onPress={handleCategoryPress} />
-        )}
+        renderItem={renderCategoryItem}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.listContent}
@@ -32,13 +36,13 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
   },
   header: {
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#e9ecef',
   },
   title: {
     fontSize: 24,

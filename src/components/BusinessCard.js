@@ -4,20 +4,18 @@ import { FontAwesome } from '@expo/vector-icons';
 import { getPlacePhoto } from '../api/placesApi';
 
 const BusinessCard = ({ business, onPress }) => {
-  // Get the first photo if available
-  let photoUrl = null;
-  try {
-    if (business.photos && business.photos.length > 0 && business.photos[0].photo_reference) {
-      photoUrl = getPlacePhoto(business.photos[0].photo_reference);
-    } else {
-      photoUrl = 'https://via.placeholder.com/400x200?text=No+Image';
+  const getPhotoUrl = () => {
+    try {
+      if (business.photos?.[0]?.photo_reference) {
+        return getPlacePhoto(business.photos[0].photo_reference);
+      }
+    } catch (error) {
+      console.error('Error getting photo URL:', error);
     }
-  } catch (error) {
-    console.error('Error getting photo URL:', error);
-    photoUrl = 'https://via.placeholder.com/400x200?text=Error';
-  }
+    
+    return 'https://via.placeholder.com/400x200?text=No+Image';
+  };
 
-  // Format rating to display stars
   const renderRating = () => {
     if (!business.rating) return null;
     
@@ -39,28 +37,44 @@ const BusinessCard = ({ business, onPress }) => {
     );
   };
 
+  const renderOpenStatus = () => {
+    if (!business.opening_hours) return null;
+    
+    const isOpen = business.opening_hours.open_now;
+    
+    return (
+      <View style={styles.openStatusContainer}>
+        <View style={[styles.statusDot, { backgroundColor: isOpen ? '#2ecc71' : '#e74c3c' }]} />
+        <Text style={styles.openStatusText}>
+          {isOpen ? 'Open Now' : 'Closed'}
+        </Text>
+      </View>
+    );
+  };
+
+  const renderImage = () => {
+    const photoUrl = getPhotoUrl();
+    
+    return photoUrl ? (
+      <Image source={{ uri: photoUrl }} style={styles.image} />
+    ) : (
+      <View style={styles.placeholderImage}>
+        <FontAwesome name="building" size={40} color="#ddd" />
+      </View>
+    );
+  };
+
+  const address = business.vicinity || business.formatted_address;
+
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(business)} activeOpacity={0.8}>
       <View style={styles.cardContent}>
-        {photoUrl ? (
-          <Image source={{ uri: photoUrl }} style={styles.image} />
-        ) : (
-          <View style={styles.placeholderImage}>
-            <FontAwesome name="building" size={40} color="#ddd" />
-          </View>
-        )}
+        {renderImage()}
         <View style={styles.infoContainer}>
           <Text style={styles.name} numberOfLines={1}>{business.name}</Text>
-          <Text style={styles.address} numberOfLines={2}>{business.vicinity || business.formatted_address}</Text>
+          <Text style={styles.address} numberOfLines={2}>{address}</Text>
           {renderRating()}
-          {business.opening_hours && (
-            <View style={styles.openStatusContainer}>
-              <View style={[styles.statusDot, { backgroundColor: business.opening_hours.open_now ? '#2ecc71' : '#e74c3c' }]} />
-              <Text style={styles.openStatusText}>
-                {business.opening_hours.open_now ? 'Open Now' : 'Closed'}
-              </Text>
-            </View>
-          )}
+          {renderOpenStatus()}
         </View>
       </View>
     </TouchableOpacity>

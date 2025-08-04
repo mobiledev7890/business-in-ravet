@@ -1,5 +1,3 @@
-// Categories for the business directory app
-
 export const categories = [
   {
     id: 'grocery',
