@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "projectType": "application",
+  "root": "backend",
+  "sourceRoot": "backend",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm start",
+        "cwd": "backend"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run dev",
+        "cwd": "backend"
+      }
+    },
+    "prisma:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run prisma:migrate",
+        "cwd": "backend"
+      }
+    },
+    "prisma:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run prisma:seed",
+        "cwd": "backend"
+      }
+    }
+  }
+}
+
+

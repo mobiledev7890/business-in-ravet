@@ -54,7 +54,7 @@ const BusinessCard = ({ business, onPress }) => {
 
   const renderImage = () => {
     const photoUrl = getPhotoUrl();
-    
+
     return photoUrl ? (
       <Image source={{ uri: photoUrl }} style={styles.image} />
     ) : (
@@ -64,7 +64,7 @@ const BusinessCard = ({ business, onPress }) => {
     );
   };
 
-  const address = business.vicinity || business.formatted_address;
+  const address = business.address || business.vicinity || business.formatted_address;
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(business)} activeOpacity={0.8}>

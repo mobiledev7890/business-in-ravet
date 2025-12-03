@@ -41,7 +41,7 @@ const BusinessListScreen = ({ route, navigation }) => {
     <FlatList
       data={businesses}
       renderItem={renderBusinessItem}
-      keyExtractor={(item) => item.place_id}
+      keyExtractor={(item) => item.place_id || item.externalId || String(item.id)}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.listContainer}
     />

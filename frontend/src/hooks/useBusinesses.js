@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { searchPlaces } from '../api/placesApi';
+import { fetchBusinesses as fetchBusinessesFromBackend } from '../api/backendApi';
 
 export const useBusinesses = (category) => {
   const [businesses, setBusinesses] = useState([]);
@@ -7,32 +7,27 @@ export const useBusinesses = (category) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchBusinesses = async () => {
+    const loadBusinesses = async () => {
       if (!category) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        console.log(`Fetching businesses for category: ${category.title}`);
-        const results = await searchPlaces(category.searchTerm, category.placeType);
-        
-        if (!results || results.length === 0) {
-          console.log('No results found for this category');
-        } else {
-          console.log(`Found ${results.length} businesses`);
-        }
-        
+        console.log(`Fetching businesses from backend for category: ${category.id}`);
+        const results = await fetchBusinessesFromBackend(category.id);
         setBusinesses(results || []);
       } catch (err) {
         console.error('Error fetching businesses:', err);
-        setError(`Failed to load businesses: ${err.message || 'Unknown error'}. Please check your API key and try again.`);
+        setError(
+          `Failed to load businesses: ${err.message || 'Unknown error'}. Please make sure the backend is running.`,
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBusinesses();
+    loadBusinesses();
   }, [category]);
 
   const retry = async () => {
@@ -42,7 +37,7 @@ export const useBusinesses = (category) => {
     setError(null);
     
     try {
-      const results = await searchPlaces(category.searchTerm, category.placeType);
+      const results = await fetchBusinessesFromBackend(category.id);
       setBusinesses(results || []);
     } catch (err) {
       console.error('Error fetching businesses:', err);
