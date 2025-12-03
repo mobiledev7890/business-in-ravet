@@ -1,77 +1,131 @@
 # Business in Ravet
 
-A React Native mobile application for discovering local businesses in Ravet, Pune. Built with Expo and Google Places API.
+A full-stack app for discovering local businesses in Ravet, Pune.
+
+- **Frontend**: React Native app (Expo) in `frontend/`
+- **Backend**: Node.js/Express API with Prisma + PostgreSQL in `backend/`
+- **Monorepo tooling**: Nx for running and organizing both apps
 
 ## 🚀 Features
 
 - **Business Categories**: Browse businesses by category (Grocery, Salons, Hardware, Restaurants)
-- **Business Details**: View detailed information including photos, reviews, and contact details
-- **Interactive Maps**: Get directions to businesses using Google Maps
-- **Contact Integration**: Call businesses directly from the app
-- **Cross-Platform**: Works on iOS, Android, and Web
+- **Business List & Details**: View stored businesses and their details
+- **Cached Data**: Backend fetches from Google Places and stores in PostgreSQL
+- **Contact & Directions**: Call businesses and open locations in Google Maps
+- **Cross-Platform**: Frontend works on iOS, Android, and Web via Expo
 
 ## 🛠️ Tech Stack
 
-- **React Native** with Expo
-- **Google Places API** for business data
-- **React Navigation** for app navigation
-- **FontAwesome** for icons
-- **Custom Hooks** for state management
+- **Frontend**
+  - React Native with Expo (in `frontend/`)
+  - React Navigation
+  - FontAwesome icons
+  - Custom hooks for state management
+- **Backend**
+  - Node.js + Express
+  - Prisma ORM
+  - PostgreSQL (EDB instance)
+  - `node-cron` for daily sync from Google Places
+- **Tooling**
+  - Nx monorepo (`nx.json`, `project.json`)
+  - npm
 
 ## 📱 Screenshots
 
 *Add screenshots here when available*
 
-## 🏗️ Architecture
+## 🏗️ High-Level Architecture
 
-The app follows **SOLID principles** and modern React patterns:
+- **Backend flow**
+  - `/categories` → serves the configured list of categories.
+  - `/businesses?categoryId=...` → returns businesses from PostgreSQL.
+  - `/businesses/refresh` (POST) → calls Google Places for each category, upserts data into DB.
+  - A cron job runs `refreshBusinessesFromExternalApi` daily at 3 AM.
+- **Frontend flow**
+  - Loads categories from backend (with a small local fallback).
+  - For a selected category, calls backend `/businesses` instead of Google directly.
+  - Renders cards and detail views using cached data from your DB.
 
-### Custom Hooks
-- `useBusinesses` - Manages business data fetching
-- `useSelectedBusiness` - Manages selected business state
-- `useCategories` - Manages categories data
-- `useBusinessDetails` - Manages business details fetching
-
-### Components
-- `BusinessCard` - Displays business information in list
-- `BusinessDetails` - Shows detailed business information
-- `CategoryCard` - Displays business categories
-
-## 🚀 Getting Started
+## 🚀 Getting Started (Monorepo)
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm or yarn
-- Expo CLI
+- Node.js (v18+ recommended)
+- npm
+- Expo CLI (installed globally or via `npx`)
+- PostgreSQL database (EDB or local)
 - Google Places API key
 
-### Installation
+### 1. Clone and install
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/business-in-ravet.git
-   cd business-in-ravet
-   ```
+```bash
+git clone https://github.com/yourusername/business-in-ravet.git
+cd business-in-ravet
+npm install
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+Nx and all workspace dependencies are installed from the root.
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   Edit `.env` and add your Google Places API key:
-   ```
-   GOOGLE_PLACES_API_KEY=your_api_key_here
-   ```
+### 2. Backend environment
 
-4. **Start the development server**
-   ```bash
-   npm start
-   ```
+Create `backend/.env`:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/business_in_ravet?sslmode=require"
+GOOGLE_PLACES_API_KEY=your_google_places_key
+PORT=4000
+```
+
+Ensure your Postgres database exists and is reachable with that URL.
+
+Run Prisma migrations and generate the client:
+
+```bash
+cd backend
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+Seed/sync businesses from Google Places into the DB (optional, can also be done via the HTTP endpoint):
+
+```bash
+cd backend
+npx prisma db seed    # or POST /businesses/refresh from a client like Postman
+```
+
+### 3. Start backend via Nx
+
+From the repo root:
+
+```bash
+npx nx start backend
+```
+
+Then test:
+
+- `http://localhost:4000/health`
+- `http://localhost:4000/categories`
+- `http://localhost:4000/businesses`
+
+### 4. Frontend environment
+
+Create `frontend/.env` if you still use any frontend-only env vars (Google API is now used on the backend).
+
+Install any frontend-specific tools (already covered by root `npm install`).
+
+### 5. Start frontend via Nx
+
+From the repo root:
+
+```bash
+npx nx start frontend
+```
+
+Expo will start using the code in `frontend/`:
+
+- Web: press `w` or open the printed URL.
+- iOS: press `i`.
+- Android: press `a`.
 
 ### Getting a Google Places API Key
 
@@ -83,49 +137,59 @@ The app follows **SOLID principles** and modern React patterns:
 
 ## 📁 Project Structure
 
-```
-src/
-├── api/
-│   ├── categories.js     # Business categories data
-│   └── placesApi.js      # Google Places API service
-├── components/
-│   ├── BusinessCard.js   # Business list item component
-│   ├── BusinessDetails.js # Business details component
-│   └── CategoryCard.js   # Category card component
-├── hooks/
-│   ├── useBusinesses.js      # Business data management
-│   ├── useSelectedBusiness.js # Selected business state
-│   ├── useCategories.js      # Categories data
-│   └── useBusinessDetails.js # Business details fetching
-├── navigation/
-│   └── AppNavigator.js   # Navigation configuration
-└── screens/
-    ├── HomeScreen.js     # Categories list screen
-    └── BusinessListScreen.js # Business listings screen
+```text
+.
+├── backend/
+│   ├── index.js                # Express API + cron + routes
+│   ├── categoriesConfig.js     # Category definitions used for sync + API
+│   ├── placesService.js        # Google Places fetch helper
+│   ├── prisma/
+│   │   ├── schema.prisma       # Prisma models (Category, Business)
+│   │   └── seed.js             # Optional DB seed from Google Places
+│   └── project.json            # Nx project config for backend
+├── frontend/
+│   ├── App.js
+│   ├── app.json
+│   ├── babel.config.js
+│   ├── index.js
+│   ├── assets/
+│   └── src/
+│       ├── api/
+│       ├── components/
+│       ├── hooks/
+│       ├── navigation/
+│       └── screens/
+├── nx.json                     # Nx workspace config
+├── project.json                # Nx project config for frontend
+├── package.json                # Workspace root dependencies
+└── eas.json                    # Expo EAS configuration
 ```
 
 ## 🔧 Development
 
-### Running the App
+### Running the apps
 
-- **Web**: Press `w` in the terminal or visit `http://localhost:19006`
-- **iOS Simulator**: Press `i` in the terminal
-- **Android Emulator**: Press `a` in the terminal
-- **Physical Device**: Scan the QR code with Expo Go app
+- **Backend**: `npx nx start backend`
+- **Frontend (Expo)**: `npx nx start frontend`
 
-### Available Scripts
+From the Expo terminal:
 
-- `npm start` - Start the Expo development server
-- `npm run android` - Run on Android
-- `npm run ios` - Run on iOS
-- `npm run web` - Run on web
+- Web: press `w` or open the provided URL.
+- iOS Simulator: press `i`.
+- Android Emulator: press `a`.
+- Physical Device: scan the QR code with Expo Go.
+
+### Useful Nx commands
+
+- `npx nx graph` – visualize projects and dependencies.
+- `npx nx run backend:prisma:migrate` – run migrations.
+- `npx nx run backend:prisma:seed` – seed data.
 
 ## 🎯 Features in Detail
 
 ### Business Search
-- Search businesses by category in Ravet, Pune
-- Real-time data from Google Places API
-- Location-based search with customizable radius
+- Search businesses by category in Ravet, Pune.
+- Data is fetched from the backend, which periodically syncs from Google Places.
 
 ### Business Details
 - Complete business information
@@ -142,9 +206,9 @@ src/
 
 ## 🔒 Security
 
-- API keys are stored in environment variables
-- `.env` file is excluded from version control
-- No sensitive data is committed to the repository
+- API keys and DB URLs are stored in environment variables (`backend/.env`)
+- `.env` is excluded from version control
+- Frontend never talks directly to Google Places; only backend uses the API key
 
 ## 🤝 Contributing
 
