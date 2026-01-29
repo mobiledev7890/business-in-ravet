@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:4000';
+const BASE_URL = 'https://business-in-ravet-api.onrender.com';
 
 const handleResponse = async (response) => {
   if (!response.ok) {
